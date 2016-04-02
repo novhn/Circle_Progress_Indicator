@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Betterworks - Circular Progress Indicator</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
+  <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+  <script src="js/script.js"></script>
+  <script src="js/script2.js"></script>
+
+</head>
+
+
+<body ng-app="CircleProgressApp" >
+	<div ng-controller="ProgressController">
+		<div d3-circle-indicator data=progData></div>
+
+		<div input-validation input-name='progData.expectedName' input-value="progData.expected"></div>
+		<div input-validation input-name='progData.actualName' input-value="progData.actual"></div>
+
+		<br>
+		<b>Debug info (to be removed): </b><br>
+		Actual: {{round(progData.actual) + "%"}}<br>
+		Expected: {{round(progData.expected) + "%"}}<br>
+		Difference: {{round(progData.diff())+ "%"}}<br>
+		Status: {{progData.color()}}	
+	</div>
+
+
+</body>
+</html>
