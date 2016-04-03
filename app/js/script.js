@@ -1,5 +1,8 @@
 var app = angular.module('CircleProgressApp', []);
-//controller for model data
+
+  /////////////////////////////
+ //controller for model data//
+/////////////////////////////
 app.controller('ProgressController', function($scope) {
 	$scope.data = {
 		actualName: "Actual",
@@ -11,7 +14,7 @@ app.controller('ProgressController', function($scope) {
 		},
 		color: function(){
 			if ($scope.data.diff() <= -0.5){ return 'red'; }
-			if ($scope.data.diff() <= -0.25){ return 'yellow'; }
+			if ($scope.data.diff() <= -0.25){ return 'orange'; }
 			else{ return 'green'; }
 		}
 	};
@@ -20,7 +23,9 @@ app.controller('ProgressController', function($scope) {
 	};
 });
 
-//input validation for progress data
+  //////////////////////////////////////
+ //input validation for progress data//
+//////////////////////////////////////
 app.directive('inputValidation', function () {
     return {
         restrict: "EA",
@@ -33,7 +38,7 @@ app.directive('inputValidation', function () {
             scope.$watch('inputValue', function(newValue,oldValue) {
                 var arr = String(newValue).split("");
                 if (arr.length === 0) return;
-                if (arr.length === 1 && (arr[0] === '.' )) return;
+                if (arr.length === 1 && (arr[0] === '.' )) return;    //can lead with decimal
                 if (isNaN(newValue)) { scope.inputValue = oldValue; } //must be number
                 if (arr[0] == '-'){ scope.inputValue = oldValue; }    //can't be negative
                 if(newValue>1.0){ scope.inputValue = oldValue; }      //must be less than 1.0
@@ -42,7 +47,9 @@ app.directive('inputValidation', function () {
     };
 });
 
-//d3 SVG circle indicator
+  ///////////////////////////
+ //d3 SVG circle indicator//
+///////////////////////////
 app.directive("d3CircleIndicator", function() {
 	return {
 	    restrict : "EA",
@@ -65,9 +72,9 @@ app.directive("d3CircleIndicator", function() {
 
                 /* specify the arc in initial size */
                 var data = [
-                    /* start outer circle/arc */
+                    /* start outer arc */
                     {irad: 90, orad: 101, start: 0, size: scope.data.actual*360, color: scope.data.color()},
-                    /* start inner circle/arc */
+                    /* start inner arc */
                     {irad: 80, orad: 88, start: 0, size: scope.data.expected*360, color: "lightgreen"},
                     /* inner grey circle */
                     {irad: 0, orad: 76, start:0, size: 360, color: "lightgrey"}
@@ -101,7 +108,8 @@ app.directive("d3CircleIndicator", function() {
                     arcs.append("path")
                         .attr("d",arc);
 
-                    arcs.append('text').text(Math.round((scope.data.actual*100))+"%")
+                    //generate text
+                    arcs.append('text').text(Math.round((scope.data.actual*10)*100)/10+"%")
                         .attr('fill','black')
                         .attr('font-family','verdana')
                         .attr('font-size','36px')
