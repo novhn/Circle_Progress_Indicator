@@ -56,72 +56,124 @@ app.directive("d3CircleIndicator", function() {
 	    template : "<svg width='300' height='300'></svg>",
         scope: {data: '='},
 	    link: function(scope, elem, attrs){
+
             // watch for data changes and re-render
             scope.$watch('data', function(newVals, oldVals) {
                 return scope.render(newVals);
             }, true);
 
+            //arc interpolate function            
+            function arcTween(b) {
+                var i = d3.interpolate({value: b.previous}, b);
+                return function(t) {
+                return arc(i(t));
+                };
+            }  
+
+            //update arcs on new data
             scope.render = function(data){
-                d3.select("#circleind").remove();
-                /* canvas size */
-                var width = 300;
-                var height = 300;
-                /* getting out degrees-to-radians on */
-                var p = Math.PI *2 ;
-                var pi180 = p/(360);
 
-                /* specify the arc in initial size */
-                var data = [
-                    /* start outer arc */
-                    {irad: 90, orad: 101, start: 0, size: scope.data.actual*360, color: scope.data.color()},
-                    /* start inner arc */
-                    {irad: 80, orad: 88, start: 0, size: scope.data.expected*360, color: "lightgreen"},
-                    /* inner grey circle */
-                    {irad: 0, orad: 76, start:0, size: 360, color: "lightgrey"}
-                ];
+                //update inner and outer arc lengths
+                arcs.each(function(d) { d.previous = d.size, d.size=d.update() });
+                path
+                    .transition()
+                    .ease("elastic")
+                    .duration(2000)
+                    .attrTween("d",arcTween);
 
-                var canvas = d3.select("svg").append("svg")
-                        .attr("width",width)
-                        .attr("height",height)
-                        .attr("id",'circleind');
+                //update outer arc color
+                d3.select("#outer")
+                    .transition()
+                    .duration(2000)
+                    .style("fill",scope.data.color());
 
-                /* set the center of the drawing canvas */
-                var group = canvas.append("g")
-                        .attr("transform","translate(150,150)");
+                //delete and redraw numeric representation of actual percentage complete
+                d3.selectAll(".numberactual").remove();
+                d3.select("#center").append('text')
+                    .text(Math.round((scope.data.actual*10)*100)/10+"%")
+                    .attr('fill','black')
+                    .attr('font-family','verdana')
+                    .attr('font-size','36px')
+                    .attr("transform","translate(0,5)")
+                    .attr("class","numberactual")
+                    .style("text-anchor","middle");        
+            }
 
+            ///initialize widget///
+            /* canvas size */
+            var width = 300;
+            var height = 300;
+            /* getting out degrees-to-radians on */
+            var p = Math.PI *2 ;
+            var pi180 = p/(360);
 
-                var arc = d3.svg.arc()
-                        .innerRadius(function(d, i){return d.irad;})
-                        .outerRadius(function(d, i){return d.orad;})
-                        .cornerRadius(10)
-                        .startAngle(function(d, i){return pi180*(d.start);})
-                        .endAngle(function(d, i){return pi180*(d.start + d.size);})
-                        ;
+            /* specify the arc in initial size */
+            var data = [
+                /* start outer arc */
+                {name: 'outer', 
+                    irad: 90, 
+                    orad: 101, 
+                    start: 0, 
+                    size: scope.data.actual*360,
+                    update:function(){return (scope.data.actual*360);},
+                    color: scope.data.color()},
+                /* start inner arc */
+                {name: 'inner', 
+                    irad: 80, 
+                    orad: 88, 
+                    start: 0, 
+                    size: scope.data.expected*360,
+                    update: function(){return (scope.data.expected*360);}, 
+                    color: "lightgreen"},
+                /* inner grey circle */
+                {name: 'center', 
+                    irad: 0, 
+                    orad: 76, 
+                    start:0, 
+                    size: 360,
+                    update: function(){return 360;}, 
+                    color: "lightgrey"}
+            ];
 
-                var arcs = group.selectAll(".arc")
-                        .data(data)
-                        .enter()
-                        .append("g")
-                        .attr("class","arc")
-                        .style("fill",function(d, i){return d.color;});
+            /* init canvas */
+            var canvas = d3.select("svg").append("svg")
+                .attr("width",width)
+                .attr("height",height)
+                .attr("id",'circleind');
 
-                    arcs.append("path")
-                        .attr("d",arc);
+            /* set the center of the drawing canvas */
+            var group = canvas.append("g")
+                .attr("transform","translate(150,150)");
 
-                    //generate text
-                    arcs.append('text').text(Math.round((scope.data.actual*10)*100)/10+"%")
-                        .attr('fill','black')
-                        .attr('font-family','verdana')
-                        .attr('font-size','36px')
-                        .attr("transform","translate(0,5)")
-                        .style("text-anchor","middle");
-                    arcs.append('text').text("Progress")
-                        .attr('fill','grey')
-                        .attr('font-family','verdana')
-                        .attr('font-size','20px')
-                        .attr("transform","translate(0,25)")
-                        .style("text-anchor","middle");
-	        }
+            /* generate arc */
+            var arc = d3.svg.arc()
+                    .innerRadius(function(d, i){return d.irad;})
+                    .outerRadius(function(d, i){return d.orad;})
+                    .cornerRadius(10)
+                    .startAngle(function(d, i){return pi180*(d.start);})
+                    .endAngle(function(d, i){return pi180*(d.start + d.size);}) ;
+
+            /* stylize arcs and set attributes */
+            var arcs = group.selectAll(".arc")
+                    .data(data)
+                    .enter()
+                    .append("g")
+                    .attr("class","arc")
+                    .attr("id", function(d,i){return d.name;})
+                    .style("fill",function(d, i){return d.color;});
+
+            /* append arcs to path */
+            var path = arcs.append("path")
+                .attr("d",arc);
+
+            //generate static text ("Progress")
+            d3.select("#center").append('text')
+                .text("Progress")
+                .attr('fill','grey')
+                .attr('font-family','verdana')
+                .attr('font-size','20px')
+                .attr("transform","translate(0,25)")
+                .style("text-anchor","middle");
         }
 	};
 });
