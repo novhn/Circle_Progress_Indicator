@@ -66,18 +66,16 @@ app.directive("d3CircleIndicator", function() {
             function arcTween(b) {
                 var i = d3.interpolate({value: b.previous}, b);
                 return function(t) {
-                return arc(i(t));
+                    return arc(i(t));
                 };
-            }  
+            } 
 
-            //update arcs on new data
+            //update widget on new data
             scope.render = function(data){
-
                 //update inner and outer arc lengths
                 arcs.each(function(d) { d.previous = d.size, d.size=d.update() });
                 path
                     .transition()
-                    .ease("elastic")
                     .duration(2000)
                     .attrTween("d",arcTween);
 
@@ -87,19 +85,13 @@ app.directive("d3CircleIndicator", function() {
                     .duration(2000)
                     .style("fill",scope.data.color());
 
-                //delete and redraw numeric representation of actual percentage complete
-                d3.selectAll(".numberactual").remove();
-                d3.select("#center").append('text')
-                    .text(Math.round((scope.data.actual*10)*100)/10+"%")
-                    .attr('fill','black')
-                    .attr('font-family','verdana')
-                    .attr('font-size','36px')
-                    .attr("transform","translate(0,5)")
-                    .attr("class","numberactual")
-                    .style("text-anchor","middle");        
+                //update numeric representation of actual percentage complete
+                d3.selectAll(".numberactual").text(Math.round((scope.data.actual*10)*100)/10+"%");      
             }
 
-            ///initialize widget///
+              ///////////////////////  
+             ///initialize widget///
+            ///////////////////////
             /* canvas size */
             var width = 300;
             var height = 300;
@@ -110,27 +102,17 @@ app.directive("d3CircleIndicator", function() {
             /* specify the arc in initial size */
             var data = [
                 /* start outer arc */
-                {name: 'outer', 
-                    irad: 90, 
-                    orad: 101, 
-                    start: 0, 
+                {name: 'outer', irad: 90, orad: 101, start: 0, 
                     size: scope.data.actual*360,
                     update:function(){return (scope.data.actual*360);},
                     color: scope.data.color()},
                 /* start inner arc */
-                {name: 'inner', 
-                    irad: 80, 
-                    orad: 88, 
-                    start: 0, 
+                {name: 'inner', irad: 80, orad: 88, start: 0, 
                     size: scope.data.expected*360,
                     update: function(){return (scope.data.expected*360);}, 
                     color: "lightgreen"},
                 /* inner grey circle */
-                {name: 'center', 
-                    irad: 0, 
-                    orad: 76, 
-                    start:0, 
-                    size: 360,
+                {name: 'center', irad: 0, orad: 76, start:0, size: 360,
                     update: function(){return 360;}, 
                     color: "lightgrey"}
             ];
@@ -166,7 +148,7 @@ app.directive("d3CircleIndicator", function() {
             var path = arcs.append("path")
                 .attr("d",arc);
 
-            //generate static text ("Progress")
+            /* generate progress text at center of widget */
             d3.select("#center").append('text')
                 .text("Progress")
                 .attr('fill','grey')
@@ -174,6 +156,15 @@ app.directive("d3CircleIndicator", function() {
                 .attr('font-size','20px')
                 .attr("transform","translate(0,25)")
                 .style("text-anchor","middle");
+
+            d3.select("#center").append('text')
+                .text(Math.round((scope.data.actual*10)*100)/10+"%")
+                .attr('fill','black')
+                .attr('font-family','verdana')
+                .attr('font-size','36px')
+                .attr("transform","translate(0,5)")
+                .attr("class","numberactual")
+                .style("text-anchor","middle");  
         }
 	};
 });
