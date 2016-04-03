@@ -56,28 +56,34 @@ app.directive("d3CircleIndicator", function() {
 	    template : "<svg width='300' height='300'></svg>",
         scope: {data: '='},
 	    link: function(scope, elem, attrs){
-
+            
             // watch for data changes and re-render
             scope.$watch('data', function(newVals, oldVals) {
                 return scope.render(newVals);
             }, true);
 
             //arc interpolate function            
-            function arcTween(b) {
-                var i = d3.interpolate({value: b.previous}, b);
-                return function(t) {
-                    return arc(i(t));
-                };
+            function arcTween(transition, newEnd) {
+                transition.attrTween("d", function(d){
+                    var interpolateEnd = d3.interpolate(d.size, newEnd);
+                    return function(t){
+                        d.size = interpolateEnd(t);
+                        return arc(d);
+                    };
+                });
             } 
 
             //update widget on new data
             scope.render = function(data){
                 //update inner and outer arc lengths
-                arcs.each(function(d) { d.previous = d.size, d.size=d.update() });
-                path
+                path.filter(function(d){return d.name=='outer';})
                     .transition()
                     .duration(2000)
-                    .attrTween("d",arcTween);
+                    .call(arcTween, scope.data.actual*360);
+                path.filter(function(d){return d.name=='inner';})
+                    .transition()
+                    .duration(2000)
+                    .call(arcTween, scope.data.expected*360);
 
                 //update outer arc color
                 d3.select("#outer")
