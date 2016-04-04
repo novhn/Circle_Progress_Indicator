@@ -39,6 +39,10 @@ app.directive('inputValidation', function() {
       return scope.$watch('inputValue', function(newValue, oldValue) {
         var arr;
         arr = String(newValue);
+        if (oldValue === null && newValue === void 0) {
+          scope.inputValue = 0;
+          return;
+        }
         if (arr.length === 0) {
           return;
         }
@@ -48,7 +52,7 @@ app.directive('inputValidation', function() {
         if (isNaN(newValue)) {
           scope.inputValue = oldValue;
         }
-        if (arr[0] === '-') {
+        if (arr.includes("-")) {
           scope.inputValue = oldValue;
         }
         if (newValue > 1.0) {

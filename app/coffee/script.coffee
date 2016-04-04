@@ -32,13 +32,16 @@ app.directive 'inputValidation', ->
     link: (scope) ->
       scope.$watch 'inputValue', (newValue, oldValue) ->
         arr = String(newValue)
+        if oldValue == null && newValue == undefined #cover weird edge case 
+          scope.inputValue = 0                #where you could input "-" and "e"
+          return
         if arr.length == 0
           return
         if arr.length == 1 and arr[0] == '.' #can lead with decimal
           return
         if isNaN(newValue) 			#must be number
           scope.inputValue = oldValue
-        if arr[0] == '-' 			#can't be negative
+        if arr.includes("-") 		#can't be negative
           scope.inputValue = oldValue
         if newValue > 1.0 			#must be less than 1.0
           scope.inputValue = oldValue
