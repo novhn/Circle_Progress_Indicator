@@ -102,9 +102,9 @@ app.directive 'd3CircleIndicator', ->
       pi180 = p / 360
       ### specify the arc in initial size ###
       data = [
-        { id:'outer_arc', irad:90, orad:101, start:0, size:0, color:'green' }
-        { id:'inner_arc', irad:80, orad:88,  start:0, size:0, color:'lightgreen'}
-        { id:'center_circle', irad:0, orad:76, start:0, size:360, color:'lightgrey'}
+        { id:'outer_arc', irad:88, orad:100, start:0, size:0, color:'green' }
+        { id:'inner_arc', irad:80, orad:86,  start:0, size:0, color:'lightgreen'}
+        { id:'center_circle', irad:0, orad:78, start:0, size:360, color:'lightgrey'}
       ]
 
       ### init canvas ###
