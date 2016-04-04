@@ -1,8 +1,8 @@
 var app = angular.module('CircleProgressApp', []);
 
-  /////////////////////////////
- //controller for model data//
-/////////////////////////////
+  ////////////////////////////////
+ //controller for progress data//
+////////////////////////////////
 app.controller('ProgressController', function($scope) {
 	$scope.data = {
 		actualName: "Actual",
@@ -13,13 +13,13 @@ app.controller('ProgressController', function($scope) {
 			return ($scope.data.actual - $scope.data.expected);
 		},
 		color: function(){
-			if ($scope.data.diff() <= -0.5){ return 'red'; }
+			if ($scope.data.diff() <= -0.50){ return 'red'; }
 			if ($scope.data.diff() <= -0.25){ return 'orange'; }
-			else{ return 'green'; }
+			else { return 'green'; }
 		}
 	};
 	$scope.round = function(input){
-			return Math.round((input*10000))*100/10000;
+		return Math.round((input*10000))*100/10000;
 	};
 });
 
@@ -29,7 +29,7 @@ app.controller('ProgressController', function($scope) {
 app.directive('inputValidation', function () {
     return {
         restrict: "EA",
-        template: '{{inputName}}: <input name="{{inputName}}" type="number" step="0.01" ng-model="inputValue" /><br>',
+        template: '{{inputName}}: <input name="{{inputName}}" type="number" step="0.01" ng-model="inputValue"/><br>',
         scope: {
             inputValue: '=',
             inputName: '='
@@ -55,44 +55,45 @@ app.directive("d3CircleIndicator", function() {
 	    restrict : "EA",
 	    template : "<svg width='300' height='300'></svg>",
         scope: {data: '='},
-	    link: function(scope, elem, attrs){
-            
-            // watch for data changes and re-render
+	    link: function(scope){
+
+            /* watch for data changes and re-render */
             scope.$watch('data', function(newVals, oldVals) {
                 return scope.render(newVals);
             }, true);
 
-            //arc interpolate function            
-            function arcTween(transition, newEnd) {
+            /* arc interpolate function */          
+            function arcTween(transition, newSize) {
                 transition.attrTween("d", function(d){
-                    var interpolateEnd = d3.interpolate(d.size, newEnd);
+                    var interpolate = d3.interpolate(d.size, newSize);
                     return function(t){
-                        d.size = interpolateEnd(t);
+                        d.size = interpolate(t);
                         return arc(d);
                     };
                 });
             } 
 
-            //update widget on new data
+            /* update widget on new data */
             scope.render = function(data){
-                //update inner and outer arc lengths
-                path.filter(function(d){return d.name=='outer';})
+                /* update progress arcs with new lengths */
+                path.filter(function(d){return d.id=='outer_arc';})
                     .transition()
-                    .duration(2000)
+                    .duration(1000)
                     .call(arcTween, scope.data.actual*360);
-                path.filter(function(d){return d.name=='inner';})
+                path.filter(function(d){return d.id=='inner_arc';})
                     .transition()
-                    .duration(2000)
+                    .duration(1000)
                     .call(arcTween, scope.data.expected*360);
 
-                //update outer arc color
-                d3.select("#outer")
+                /* update actual progress arc color */
+                d3.select("#outer_arc")
                     .transition()
                     .duration(2000)
                     .style("fill",scope.data.color());
 
-                //update numeric representation of actual percentage complete
-                d3.selectAll(".numberactual").text(Math.round((scope.data.actual*10)*100)/10+"%");      
+                /* update text representation of actual % complete */
+                d3.select(".number_actual")
+                    .text(Math.round((scope.data.actual*10)*100)/10+"%");      
             }
 
               ///////////////////////  
@@ -108,19 +109,11 @@ app.directive("d3CircleIndicator", function() {
             /* specify the arc in initial size */
             var data = [
                 /* start outer arc */
-                {name: 'outer', irad: 90, orad: 101, start: 0, 
-                    size: scope.data.actual*360,
-                    update:function(){return (scope.data.actual*360);},
-                    color: scope.data.color()},
+                {id: 'outer_arc', irad: 90, orad: 101, start: 0, size: 0, color: "green"},
                 /* start inner arc */
-                {name: 'inner', irad: 80, orad: 88, start: 0, 
-                    size: scope.data.expected*360,
-                    update: function(){return (scope.data.expected*360);}, 
-                    color: "lightgreen"},
+                {id: 'inner_arc', irad: 80, orad: 88, start: 0, size: 0, color: "lightgreen"},
                 /* inner grey circle */
-                {name: 'center', irad: 0, orad: 76, start:0, size: 360,
-                    update: function(){return 360;}, 
-                    color: "lightgrey"}
+                {id: 'center_circle', irad: 0, orad: 76, start:0, size: 360, color: "lightgrey"}
             ];
 
             /* init canvas */
@@ -147,15 +140,16 @@ app.directive("d3CircleIndicator", function() {
                     .enter()
                     .append("g")
                     .attr("class","arc")
-                    .attr("id", function(d,i){return d.name;})
+                    .attr("id", function(d,i){return d.id;})
                     .style("fill",function(d, i){return d.color;});
 
             /* append arcs to path */
             var path = arcs.append("path")
-                .attr("d",arc);
+                    .attr("d",arc);
 
             /* generate progress text at center of widget */
-            d3.select("#center").append('text')
+            d3.select("#center_circle")
+                .append('text')
                 .text("Progress")
                 .attr('fill','grey')
                 .attr('font-family','verdana')
@@ -163,13 +157,14 @@ app.directive("d3CircleIndicator", function() {
                 .attr("transform","translate(0,25)")
                 .style("text-anchor","middle");
 
-            d3.select("#center").append('text')
-                .text(Math.round((scope.data.actual*10)*100)/10+"%")
+            d3.select("#center_circle")
+                .append('text')
+                //actual text defined in render()
                 .attr('fill','black')
                 .attr('font-family','verdana')
                 .attr('font-size','36px')
                 .attr("transform","translate(0,5)")
-                .attr("class","numberactual")
+                .attr("class","number_actual")
                 .style("text-anchor","middle");  
         }
 	};
