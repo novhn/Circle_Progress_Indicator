@@ -52,10 +52,17 @@ app.directive 'inputValidation', ->
 app.directive 'd3CircleIndicator', ->
   {
     restrict: 'EA'
-    template: '<svg width=\'300\' height=\'300\'></svg>'
+    template: '<div id="circle_indicator"></div>'
     scope: 
     	data: '='
     link: (scope) ->
+      d3.select("div#circle_indicator")
+       .classed("svg-container", true) #container class to make it responsive
+       .append("svg")
+       .attr("preserveAspectRatio", "xMinYMin meet")
+       .attr("viewBox", "0 0 800 800")
+       .classed("svg-content-responsive", true);   #make responsive
+
       ### watch for data changes and re-render ###
       scope.$watch('data', 
         ((newVals, oldVals) ->scope.render(newVals)), true)
@@ -115,7 +122,7 @@ app.directive 'd3CircleIndicator', ->
       			.attr('id', 'circleind')
 
       ### set the center of the drawing canvas ###
-      group = canvas.append('g').attr('transform', 'translate(150,150)')
+      group = canvas.append('g').attr('transform', 'translate(100,100)')
 
       ### generate arc ###
       arc = d3.svg.arc()
@@ -148,5 +155,5 @@ app.directive 'd3CircleIndicator', ->
       .append('text')
       .attr('id','progress_number')
       .attr('transform', 'translate(0,5)')
-      .style 'text-anchor', 'middle'
+      .style('text-anchor', 'middle')
   }

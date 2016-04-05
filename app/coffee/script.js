@@ -66,14 +66,15 @@ app.directive('inputValidation', function() {
 app.directive('d3CircleIndicator', function() {
   return {
     restrict: 'EA',
-    template: '<svg width=\'300\' height=\'300\'></svg>',
+    template: '<div id="circle_indicator"></div>',
     scope: {
       data: '='
     },
     link: function(scope) {
+      var arc, arcTween, arcs, canvas, data, group, height, p, path, pi180, width;
+      d3.select("div#circle_indicator").classed("svg-container", true).append("svg").attr("preserveAspectRatio", "xMinYMin meet").attr("viewBox", "0 0 800 800").classed("svg-content-responsive", true);
 
       /* watch for data changes and re-render */
-      var arc, arcTween, arcs, canvas, data, group, height, p, path, pi180, width;
       scope.$watch('data', (function(newVals, oldVals) {
         return scope.render(newVals);
       }), true);
@@ -146,7 +147,7 @@ app.directive('d3CircleIndicator', function() {
       canvas = d3.select('svg').append('svg').attr('width', width).attr('height', height).attr('id', 'circleind');
 
       /* set the center of the drawing canvas */
-      group = canvas.append('g').attr('transform', 'translate(150,150)');
+      group = canvas.append('g').attr('transform', 'translate(100,100)');
 
       /* generate arc */
       arc = d3.svg.arc().innerRadius(function(d, i) {
