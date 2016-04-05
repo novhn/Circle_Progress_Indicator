@@ -105,7 +105,7 @@ app.directive('d3CircleIndicator', function() {
         d3.select('#outer_arc').transition().duration(2000).style('fill', scope.data.color());
 
         /* update text representation of actual % complete */
-        return d3.select('.number_actual').text(Math.round(scope.data.actual * 10 * 100) / 10 + '%');
+        return d3.select('#progress_number').text(Math.round(scope.data.actual * 10 * 100) / 10 + '%');
       };
 
       /* canvas size */
@@ -170,8 +170,8 @@ app.directive('d3CircleIndicator', function() {
       path = arcs.append('path').attr('d', arc);
 
       /* generate progress text at center of widget */
-      d3.select('#center_circle').append('text').text('Progress').attr('fill', 'grey').attr('font-family', 'verdana').attr('font-size', '20px').attr('transform', 'translate(0,25)').style('text-anchor', 'middle');
-      return d3.select('#center_circle').append('text').attr('fill', 'black').attr('font-family', 'verdana').attr('font-size', '36px').attr('transform', 'translate(0,5)').attr('class', 'number_actual').style('text-anchor', 'middle');
+      d3.select('#center_circle').append('text').text('Progress').attr('id', 'progress_label').style('text-anchor', 'middle');
+      return d3.select('#center_circle').append('text').attr('id', 'progress_number').attr('transform', 'translate(0,5)').style('text-anchor', 'middle');
     }
   };
 });

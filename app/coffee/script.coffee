@@ -87,7 +87,7 @@ app.directive 'd3CircleIndicator', ->
           .style('fill', scope.data.color())
 
         ### update text representation of actual % complete ###
-        d3.select('.number_actual')
+        d3.select('#progress_number')
           .text(Math.round(scope.data.actual * 10 * 100) / 10 + '%')
 
       ###################  
@@ -141,18 +141,12 @@ app.directive 'd3CircleIndicator', ->
       d3.select('#center_circle')
       .append('text')
       .text('Progress')
-      .attr('fill', 'grey')
-      .attr('font-family', 'verdana')
-      .attr('font-size', '20px')
-      .attr('transform', 'translate(0,25)')
+      .attr('id','progress_label')
       .style('text-anchor', 'middle')
       
       d3.select('#center_circle')
       .append('text')
-      .attr('fill', 'black')
-      .attr('font-family', 'verdana')
-      .attr('font-size', '36px')
+      .attr('id','progress_number')
       .attr('transform', 'translate(0,5)')
-      .attr('class', 'number_actual')
       .style 'text-anchor', 'middle'
   }

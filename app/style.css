@@ -1,0 +1,15 @@
+#progress_label{
+	font-family: verdana;
+	fill: gray;
+	font-size: 20px;
+	transform: translate(0px,25px);
+	text-anchor: center;
+}
+
+#progress_number{
+	font-family: verdana;
+	fill: black;
+	font-size: 36px;
+	text-anchor: center;
+
+}
