@@ -23,9 +23,19 @@ app.controller 'ProgressController', ($scope) ->
 ####################################
 #input validation for progress data#
 ####################################
+
+#would more ideally like to include this input field in the svg widget itself,
+#so it resizes with the widget...
 app.directive 'inputValidation', ->
     restrict: 'EA'
-    template: '{{inputName}}: <input name="{{inputName}}" type="number" step="0.01" ng-model="inputValue"/><br>'
+    template: '<div class="prog_input">
+                {{inputName}}: <br>
+                <input name="{{inputName}}" 
+                  type="number" 
+                  step="0.01" 
+                  ng-model="inputValue"/>
+                <br>
+              </div>'
     scope:
       inputValue: '='
       inputName: '='
@@ -45,6 +55,7 @@ app.directive 'inputValidation', ->
           scope.inputValue = oldValue
         if newValue > 1.0 			#must be less than 1.0
           scope.inputValue = oldValue
+
 
 #########################
 #d3 SVG circle indicator#

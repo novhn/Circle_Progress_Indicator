@@ -1,22 +1,31 @@
-#progress_label{
+body{
 	font-family: verdana;
+}
+
+#progress_label{
 	fill: gray;
 	font-size: 20px;
 	transform: translate(0px,25px);
 }
 
 #progress_number{
-	font-family: verdana;
 	fill: black;
 	font-size: 36px;
 }
 
+input{
+	margin: 2px 10px;
+	width: 10%;
+}
+.prog_input{
+	font-size: 16px;
+}
 
 .svg-container {
     display: inline-block;
     position: relative;
     width: 100%;
-    padding-bottom: 25%; /* aspect ratio */
+    padding-bottom: 25%;
     vertical-align: top;
     overflow: hidden;
 }

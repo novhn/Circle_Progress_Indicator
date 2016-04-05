@@ -30,7 +30,7 @@ app.controller('ProgressController', function($scope) {
 app.directive('inputValidation', function() {
   return {
     restrict: 'EA',
-    template: '{{inputName}}: <input name="{{inputName}}" type="number" step="0.01" ng-model="inputValue"/><br>',
+    template: '<div class="prog_input"> {{inputName}}: <br> <input name="{{inputName}}" type="number" step="0.01" ng-model="inputValue"/> <br> </div>',
     scope: {
       inputValue: '=',
       inputName: '='
