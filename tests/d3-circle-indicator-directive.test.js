@@ -1,4 +1,4 @@
-describe ('Input Validation Unit Tests', function(){
+describe ('D3 SVG Generator Unit Tests', function(){
 	beforeEach(module('CircleProgressApp'));
 	
 	var $rootScope, element, dirElementInput, $scope;
@@ -12,35 +12,29 @@ describe ('Input Validation Unit Tests', function(){
     $rootScope.$digest();
     $scope = $rootScope.$new()
     $scope.$digest();
-
-    element = $compile("<div input-validation data=\"input\"></div>")($scope);
-    $scope.$digest();
-    dirElementInput = element.find('input');	    
   }));
   
   describe('input validation',function(){
   	it('basic template', function(){
 
   	});
-  	it('rejects NaN', function(){
+  	it ('increases arc length on new expected data', function(){
 
-  	});
-  	it('rejects negatives', function(){
+    });
+    it ('decreases arc length on new expected data', function(){
 
-  	});
-  	it('rejects greater than 1', function(){
+    });
+    it ('increases arc length on new actual data', function(){
 
-  	});
-  	it('accepts between 0 and 1', function(){
+    });
+    it ('decreases arc length on new actual data', function(){
 
-  	});
-  	it('accepts 0', function(){
+    });
+    it ('updates color on new color data', function(){
 
-  	});
-  	it('accepts 1', function(){
+    });
+    it ('updates numeric progress text on new data', function(){
 
-  	});
-
+    });
   });
-
 });
